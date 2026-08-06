@@ -106,15 +106,6 @@
         .rv-article-detail { padding: 3rem 4vw 5rem; max-width: 68ch; }
         .rv-back { font-size: 0.85rem; color: var(--brass); margin-bottom: 1.4rem; }
 
-        /* PRICE LIST */
-        .rv-pricelist { padding: 0 4vw 4rem; display: flex; flex-direction: column; gap: 3rem; max-width: 640px; }
-        .rv-price-category-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; margin: 0 0 0.6rem 0; letter-spacing: 0.01em; }
-        .rv-price-rows { list-style: none; margin: 1.4rem 0 0; padding: 0; display: flex; flex-direction: column; }
-        .rv-price-row { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
-        .rv-price-name { font-size: 1rem; color: var(--ink); }
-        .rv-price-dots { flex: 1; border-bottom: 1px dotted var(--line); margin-bottom: 5px; }
-        .rv-price-amount { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--wine); white-space: nowrap; }
-        .rv-category-card { align-items: flex-start; gap: 0.3rem; }
         .rv-empty { padding: 2rem 4vw; color: #8a7c6e; }
 
         /* MODAL */
@@ -153,8 +144,15 @@
         .rv-footer-note { width: 100%; font-size: 0.72rem; color: #a89a8c; margin-top: 0.5rem; }
 
         .rv-producer-list { display: flex; flex-direction: column; gap: 1rem; padding: 0 4vw 3rem; }
-        .rv-producer-block { border: 1px solid var(--line); background: var(--paper-alt); padding: 1.4rem 1.6rem; border-radius: 3px; }
+        .rv-producer-block { border: 1px solid var(--line); background: var(--paper-alt); padding: 1.4rem 1.6rem; border-radius: 3px; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transition: transform .18s ease, box-shadow .18s ease; }
+        .rv-producer-block:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(28,21,18,0.08); }
         .rv-producer-block .rv-card-name { margin: 0; }
+
+        .rv-productlist { padding: 0 4vw 4rem; display: flex; flex-direction: column; gap: 3rem; }
+        .rv-product-category { max-width: 980px; }
+        .rv-price-category-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; margin: 0 0 0.6rem 0; letter-spacing: 0.01em; }
+        .rv-product-card { cursor: default; }
+        .rv-product-type { display: inline-block; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass); border: 1px solid var(--line); border-radius: 12px; padding: 0.2rem 0.6rem; margin-bottom: 0.6rem; align-self: flex-start; }
 
 </style>
 </head>
@@ -183,10 +181,11 @@ const T = {
       titleA: "Vin med ",
       titleEm: "ursprung.",
       sub: "Vi reser till vingårdarna, förhandlar direkt med odlarna och tar in det som är för litet, för udda eller för hantverksmässigt för de stora distributörerna.",
-      cta1: "Se prislistan",
+      cta1: "Se våra viner",
       cta2: "Läs våra artiklar",
     },
     featured: { eyebrow: "Våra producenter", title: "Två producenter vi står bakom" },
+    produkter: { eyebrow: "Sortimentet", title: "Våra viner", back: "← Till startsidan" },
     philosophy: {
       eyebrow: "Vår filosofi",
       title: "Färre led, mer producent",
@@ -235,10 +234,11 @@ const T = {
       titleA: "Wine with ",
       titleEm: "origin.",
       sub: "We travel to the vineyards, negotiate directly with the growers, and bring in what's too small, too unusual, or too hand-made for the big distributors.",
-      cta1: "View the price list",
+      cta1: "See our wines",
       cta2: "Read our articles",
     },
     featured: { eyebrow: "Our producers", title: "Two producers we stand behind" },
+    produkter: { eyebrow: "The range", title: "Our wines", back: "← Back to homepage" },
     philosophy: {
       eyebrow: "Our philosophy",
       title: "Fewer middlemen, more producer",
@@ -287,10 +287,11 @@ const T = {
       titleA: "Vinho com ",
       titleEm: "origem.",
       sub: "Viajamos até às vinhas, negociamos diretamente com os produtores e trazemos aquilo que é demasiado pequeno, demasiado peculiar ou demasiado artesanal para os grandes distribuidores.",
-      cta1: "Ver a lista de preços",
+      cta1: "Ver os nossos vinhos",
       cta2: "Ler os nossos artigos",
     },
     featured: { eyebrow: "Os nossos produtores", title: "Dois produtores em quem confiamos" },
+    produkter: { eyebrow: "A seleção", title: "Os nossos vinhos", back: "← Voltar ao início" },
     philosophy: {
       eyebrow: "A nossa filosofia",
       title: "Menos intermediários, mais produtor",
@@ -331,23 +332,34 @@ const WINE_CATEGORIES = [
     id: "casa-da-torre",
     name: "ADEGA CASA DA TORRE \u2014 VINHO VERDE",
     wines: [
-      { id: 1, name: "Sousa Lopes Vinho Verde", price: 150 },
-      { id: 2, name: "Sousa Lopes Loureiro", price: 150 },
-      { id: 3, name: "Sousa Lopes Chardonnay", price: 150 },
-      { id: 4, name: "Sousa Lopes Sauvignon Blanc", price: 150 },
-      { id: 5, name: "Sousa Lopes Reserva", price: 150 },
+      { id: 1, name: "Sousa Lopes Vinho Verde", grape: "Alvarinho, Loureiro, Arinto", type: { sv: "Vitt vin", en: "White wine", pt: "Vinho branco" },
+        desc: { sv: "Ett fräscht blandvin med subtil arom av tropisk frukt och mineral, mjuk textur och balanserad syra. Passar som aperitif eller till grillad fisk.", en: "A fresh blended white with a subtle aroma of tropical fruit and minerality, soft texture and balanced acidity. Lovely as an aperitif or with grilled fish.", pt: "Um branco fresco e frutado, com aroma subtil a fruta tropical e mineralidade, textura macia e acidez equilibrada. Ótimo como aperitivo ou com peixe grelhado." } },
+      { id: 2, name: "Sousa Lopes Loureiro", grape: "Loureiro", type: { sv: "Vitt vin", en: "White wine", pt: "Vinho branco" },
+        desc: { sv: "Enskild druva, fräsch och blommig med citrusnoter och en lång eftersmak av apelsin och citron. Till grillad fisk och skaldjur.", en: "A single-variety white, fresh and floral with citrus notes and a long finish of orange and lemon. Pairs well with grilled fish and shellfish.", pt: "Monovarietal, fresco e floral, com notas cítricas e um final longo a laranja e limão. Combina bem com peixe grelhado e marisco." } },
+      { id: 3, name: "Sousa Lopes Chardonnay", grape: "Chardonnay", type: { sv: "Vitt vin", en: "White wine", pt: "Vinho branco" },
+        desc: { sv: "Från samma familjegård, en Chardonnay i Vinho Verde-stil — fräsch, mineralisk och med en lätt fatkaraktär.", en: "From the same family estate, a Chardonnay in Vinho Verde style — fresh, mineral-driven with a light touch of oak.", pt: "Da mesma quinta familiar, um Chardonnay em estilo Vinho Verde — fresco, mineral, com um leve toque de madeira." } },
+      { id: 4, name: "Sousa Lopes Sauvignon Blanc", grape: "Sauvignon Blanc", type: { sv: "Vitt vin", en: "White wine", pt: "Vinho branco" },
+        desc: { sv: "Aromatisk och spänstig med Sauvignon Blancs typiska gröna, citrusiga karaktär, odlad på samma gård som regionens klassiska druvor.", en: "Aromatic and zesty, with Sauvignon Blanc's typical green, citrus character, grown on the same estate alongside the region's classic varieties.", pt: "Aromático e vibrante, com o carácter verde e cítrico típico da Sauvignon Blanc, cultivado na mesma quinta a par das castas clássicas da região." } },
+      { id: 5, name: "Sousa Lopes Reserva", grape: "Blend", type: { sv: "Vitt vin", en: "White wine", pt: "Vinho branco" },
+        desc: { sv: "Halmgul med arom av apelsinblom, aprikos, ingefära och kryddor. Den mest koncentrerade av gårdens vita viner.", en: "Straw-coloured with aromas of orange blossom, apricot, ginger and spice. The most concentrated of the estate's white wines.", pt: "Cor de palha, com aromas a flor de laranjeira, alperce, gengibre e especiarias. O mais concentrado dos brancos da quinta." } },
     ],
   },
   {
     id: "secret-spot",
     name: "SECRET SPOT WINES \u2014 DOURO VALLEY",
     wines: [
-      { id: 6, name: "Lacrau Moscatel Galego Branco Colheita", price: 150 },
-      { id: 7, name: "Lacrau Reserva", price: 150 },
-      { id: 8, name: "Secret Spot 10YO Moscatel Douro", price: 150 },
-      { id: 9, name: "Secret Spot 20YO Moscatel Douro", price: 150 },
-      { id: 10, name: "Secret Spot 40YO Moscatel Douro", price: 150 },
-      { id: 11, name: "Secret Spot \u201cKing\u201d Very Old", price: 150 },
+      { id: 6, name: "Lacrau Moscatel Galego Branco Colheita", grape: "Moscatel Galego", type: { sv: "Vitt vin", en: "White wine", pt: "Vinho branco" },
+        desc: { sv: "Ett torrt, stilla vitt vin på druvan Moscatel Galego — blommigt, med tropisk frukt och citrus, krämig textur och spänstig syra.", en: "A dry, still white made from the Moscatel Galego grape — floral, with tropical fruit and citrus, a creamy texture and crisp acidity.", pt: "Um branco seco e tranquilo feito com a casta Moscatel Galego — floral, com fruta tropical e citrinos, textura cremosa e acidez viva." } },
+      { id: 7, name: "Lacrau Reserva", grape: "Moscatel Galego", type: { sv: "Vitt vin", en: "White wine", pt: "Vinho branco" },
+        desc: { sv: "En mer koncentrerad Moscatel Galego från samma gård, med djupare arom och 14% alkohol.", en: "A more concentrated Moscatel Galego from the same estate, with deeper aromatics and 14% alcohol.", pt: "Um Moscatel Galego mais concentrado da mesma quinta, com aromas mais profundos e 14% de álcool." } },
+      { id: 8, name: "Secret Spot 10YO Moscatel Douro", grape: "Moscatel Galego", type: { sv: "Starkvin", en: "Fortified", pt: "Generoso" },
+        desc: { sv: "Ett starkvin av Moscatel, lagrat 10 år på fat — börjar utveckla nötiga, honungslika toner utan att tappa frukten.", en: "A fortified Moscatel, aged 10 years in cask — starting to develop nutty, honeyed notes while keeping its fruit.", pt: "Um generoso de Moscatel, envelhecido 10 anos em casco — começa a desenvolver notas de frutos secos e mel, sem perder a fruta." } },
+      { id: 9, name: "Secret Spot 20YO Moscatel Douro", grape: "Moscatel Galego", type: { sv: "Starkvin", en: "Fortified", pt: "Generoso" },
+        desc: { sv: "20 års fatlagring ger ett djupare, mer koncentrerat starkvin med toner av valnöt, torkad frukt och karamell.", en: "20 years in cask give a deeper, more concentrated fortified wine with notes of walnut, dried fruit and caramel.", pt: "20 anos em casco resultam num generoso mais profundo e concentrado, com notas de noz, fruta seca e caramelo." } },
+      { id: 10, name: "Secret Spot 40YO Moscatel Douro", grape: "Moscatel Galego", type: { sv: "Starkvin", en: "Fortified", pt: "Generoso" },
+        desc: { sv: "Fyra decenniers fatlagring ger ett mörkt, komplext starkvin med toner av torkad fikon, mandel och en lång, len eftersmak.", en: "Four decades in cask produce a dark, complex fortified wine with notes of dried fig, almond and a long, silky finish.", pt: "Quatro décadas em casco resultam num generoso escuro e complexo, com notas de figo seco, amêndoa e um final longo e sedoso." } },
+      { id: 11, name: "Secret Spot \u201cKing\u201d Very Old", grape: "Moscatel Galego", type: { sv: "Starkvin", en: "Fortified", pt: "Generoso" },
+        desc: { sv: "Ett sällsynt starkvin sammansatt av flera partier moskatel som vart och ett lagrats minst 73 år på gamla ekfat, och därefter ytterligare 22 år efter att blandningen satts samman. Numrerad och begränsad upplaga om 120 flaskor.", en: "A rare fortified wine blended from several batches of Muscat, each aged at least 73 years in old oak casks, followed by a further 22 years after the blend was formed. A numbered, limited edition of 120 bottles.", pt: "Um raro vinho generoso resultante de vários lotes de Moscatel, cada um envelhecido pelo menos 73 anos em velhas pipas de carvalho, seguido de mais 22 anos após a formação do lote. Edição numerada e limitada a 120 garrafas." } },
     ],
   },
 ];
@@ -496,9 +508,10 @@ function renderArticleCard(a) {
 function renderHem() {
   const t = T[state.lang];
   const producerBlocks = WINE_CATEGORIES.map(cat => `
-    <div class="rv-producer-block">
+    <button class="rv-producer-block" data-nav="produkter">
       <h3 class="rv-card-name">${esc(cat.name)}</h3>
-    </div>`).join("");
+      <span class="rv-read-more">${esc(t.hero.cta1)} →</span>
+    </button>`).join("");
   const articleCards = ARTICLES.slice(0, 2).map(renderArticleCard).join("");
   return `
     <section class="rv-hero">
@@ -507,7 +520,8 @@ function renderHem() {
       ${vineLine(260)}
       <p class="rv-hero-sub">${esc(t.hero.sub)}</p>
       <div class="rv-hero-actions">
-        <button class="rv-btn primary" data-nav="artiklar">${esc(t.hero.cta2)}</button>
+        <button class="rv-btn primary" data-nav="produkter">${esc(t.hero.cta1)}</button>
+        <button class="rv-btn ghost" data-nav="artiklar">${esc(t.hero.cta2)}</button>
       </div>
     </section>
 
@@ -540,29 +554,30 @@ function renderHem() {
     </section>`;
 }
 
-function renderViner() {
+function renderProdukter() {
   const t = T[state.lang];
-  const totalCount = WINE_CATEGORIES.reduce((sum, c) => sum + c.wines.length, 0);
   const categories = WINE_CATEGORIES.map(cat => `
-    <div class="rv-price-category">
+    <div class="rv-product-category">
       <h2 class="rv-price-category-title">${esc(cat.name)}</h2>
       ${vineLine(100)}
-      <ul class="rv-price-rows">
+      <div class="rv-grid">
         ${cat.wines.map(w => `
-          <li class="rv-price-row">
-            <span class="rv-price-name">${esc(w.name)}</span>
-            <span class="rv-price-dots" aria-hidden="true"></span>
-            <span class="rv-price-amount">${w.price} kr</span>
-          </li>`).join("")}
-      </ul>
+          <div class="rv-card rv-product-card">
+            <span class="rv-product-type">${esc(w.type[state.lang])}</span>
+            <h3 class="rv-card-name">${esc(w.name)}</h3>
+            <p class="rv-card-grape">${esc(w.grape)}</p>
+            <p class="rv-body small">${esc(w.desc[state.lang])}</p>
+          </div>`).join("")}
+      </div>
     </div>`).join("");
   return `
     <section class="rv-section-head page-head">
-      <p class="rv-eyebrow">${esc(t.viner.eyebrow)}</p>
-      <h1 class="rv-h1">${totalCount}${esc(t.viner.countSuffix)}</h1>
+      <button class="rv-back" data-nav="hem">${esc(t.produkter.back)}</button>
+      <p class="rv-eyebrow">${esc(t.produkter.eyebrow)}</p>
+      <h1 class="rv-h1">${esc(t.produkter.title)}</h1>
       ${vineLine(160)}
     </section>
-    <section class="rv-pricelist">${categories}</section>`;
+    <section class="rv-productlist">${categories}</section>`;
 }
 
 function renderArtiklar() {
@@ -652,7 +667,7 @@ function render() {
   }
   let body = "";
   if (state.view === "hem") body = renderHem();
-  else if (state.view === "viner") body = renderViner();
+  else if (state.view === "produkter") body = renderProdukter();
   else if (state.view === "artiklar") body = renderArtiklar();
   else if (state.view === "artikel") body = renderArtikelDetalj();
   else if (state.view === "om") body = renderOmOss();
