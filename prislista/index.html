@@ -8,11 +8,11 @@
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Work+Sans:wght@300;400;500;600&display=swap');
   .rv-app { --ink:#1C1512; --paper:#FFFFFF; --brass:#8C7A4E; --wine:#A41519; --wine-light:#C41E23; font-family:'Work Sans', sans-serif; }
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Work+Sans:wght@300;400;500;600&display=swap');
-  .rv-app button { font-family: inherit; cursor: pointer; }
+  .rv-app button { font-family: inherit; cursor: pointer; border: none; background: none; }
   .rv-eyebrow { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass); font-weight: 500; }
   .rv-h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 500; margin: 0; }
   .rv-body.small { font-size: 0.9rem; color: #4a3f35; }
-  .rv-brand { display: flex; align-items: center; gap: 0.5rem; }
+  .rv-brand { display: flex; align-items: center; gap: 0.5rem; padding: 0; }
   .rv-logo-img { height: 34px; width: auto; display: block; }
   .rv-logo-img.small { height: 24px; }
   .rv-logo-img.large { height: 64px; margin: 0 auto; }
@@ -458,23 +458,12 @@ function vineLine(width = 220, extraClass = "") {
 
 function renderNav() {
   const t = T[state.lang];
-  const items = [
-    ["hem", t.nav.hem],
-    ["viner", t.nav.viner],
-    ["artiklar", t.nav.artiklar],
-    ["om", t.nav.om],
-  ];
-  const navLinks = items.map(([key, label]) => {
-    const active = state.view === key || (state.view === "artikel" && key === "artiklar");
-    return `<button class="rv-nav-link ${active ? "active" : ""}" data-nav="${key}">${esc(label)}</button>`;
-  }).join("");
   const langBtns = LANGS.map(l => `<button class="rv-lang-btn ${state.lang === l.code ? "active" : ""}" data-lang="${l.code}">${l.label}</button>`).join("");
   return `
     <header class="rv-nav">
       <button class="rv-brand" data-nav="hem">
         <img src="${LOGO_SRC}" alt="PortoFolioWines" class="rv-logo-img">
       </button>
-      <nav class="rv-nav-links">${navLinks}</nav>
       <div class="rv-lang-switch">${langBtns}</div>
     </header>`;
 }
@@ -484,12 +473,6 @@ function renderFooter() {
   return `
     <footer class="rv-footer">
       <div><img src="${LOGO_SRC}" alt="PortoFolioWines" class="rv-logo-img small"></div>
-      <nav class="rv-footer-links">
-        <button data-nav="hem">${esc(t.nav.hem)}</button>
-        <button data-nav="viner">${esc(t.nav.viner)}</button>
-        <button data-nav="artiklar">${esc(t.nav.artiklar)}</button>
-        <button data-nav="om">${esc(t.nav.om)}</button>
-      </nav>
       <p class="rv-footer-note">${esc(t.footer.note)}</p>
     </footer>`;
 }
